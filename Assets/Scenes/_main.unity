@@ -983,6 +983,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 6f9bcd3cc4679fd4bac8ca89192eeb41, type: 3}
+      propertyPath: m_Name
+      value: monkey_low_poly (drops framerate)
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 6f9bcd3cc4679fd4bac8ca89192eeb41, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.037038434
