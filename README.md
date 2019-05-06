@@ -1,4 +1,6 @@
-# Fields-Of-View-Object-Explorer
+# Fields-Of-View-Object-Explorer : Unity Project
+
+Unity Version 2019.1.1
 
 dependencies:
 * Leap Motion Core 4.4.0
