@@ -6,26 +6,61 @@ public class network : MonoBehaviour
 {
     public Material LineMaterial;
     string line1, line2, line3, line4;
+    public GameObject sphere;
+    GameObject monkey3_point, monkey2_point, monkey1_point;
+
+   // public Object newPrefab;
 
     // Start is called before the first frame update
-    void Start()
+    void Start()  
     {
-        var points1 = new Vector3[3];
-        points1[0] = new Vector3(0, 0, 0);
-        points1[1] = new Vector3(-10, 10, 10);
-        points1[2] = new Vector3(-10, 10, 0);
+        var points1 = new Vector3[3]; //I should really refactor this now I have it working
+        points1[0] = new Vector3(-10, 5, -2);
+        points1[1] = new Vector3(-15, 5, 2);
+        points1[2] = new Vector3(-15, 5, 2);
 
         SetupLine(points1, "line1");
 
+
+        //now we put some nodes at the intersections of the line segments
+        int i = 0;
+        while (i < points1.Length)
+        {
+           GameObject s = Instantiate(sphere, points1[i], Quaternion.identity);
+            s.name = string.Concat("point1_", i.ToString()); //give it a tag we can refer to later
+            i++;
+        }
+
+
         var points2 = new Vector3[3];
-        points2[0] = new Vector3(10, 10, 10);
-        points2[1] = new Vector3(-10, 10, 10);
-        points2[2] = new Vector3(10, 0, 10);
-
-
+        points2[0] = new Vector3(-5, 5, 2);
+        points2[1] = new Vector3(-15, 5, 2);
+        points2[2] = new Vector3(-5, 0, 2);
         SetupLine(points2, "line2");
-        //line3 = SetupLine();
-        //line4 = SetupLine();
+
+        int j = 0;
+        while (j < points2.Length)
+        {
+            GameObject s = Instantiate(sphere, points2[j], Quaternion.identity);
+            s.name = string.Concat("point2_", j.ToString());
+            j++;
+        }
+
+
+        var points3 = new Vector3[3];
+        points3[0] = new Vector3(-5, 2, 2);
+        points3[1] = new Vector3(-5, 0, 2);
+        points3[2] = new Vector3(-2, 0, 0);
+        SetupLine(points3, "line3");
+
+        int k = 0;
+        while (k < points3.Length)
+        {
+            GameObject s = Instantiate(sphere, points3[k], Quaternion.identity);
+            s.name = string.Concat("point3_", k.ToString());
+            k++;
+        }
+
     }
 
     // Update is called once per frame
@@ -48,9 +83,36 @@ public class network : MonoBehaviour
         line.useWorldSpace = true;
         line.material = LineMaterial;
     
+    }
+
+    //Can't figure out how to attach these correctly to HoverBegin if the parameter isn't passed until runtime.
+    //which is why the specific node is hard coded here.
+    public void EnlargeNode()
+    {
+       GameObject objectToChange = GameObject.Find("point2_2");
+       objectToChange.transform.localScale += new Vector3(0.5f, 0.5f, 0.5f);
+
+        Renderer rend = objectToChange.GetComponent<Renderer>();
+        //Set the main Color of the Material to green
+        rend.material.shader = Shader.Find("_Color");
+        rend.material.SetColor("_Color", Color.red);
+
 
     }
 
+    public void ShrinkNode()
+    {
+        GameObject objectToChange = GameObject.Find("point2_2");
+        objectToChange.transform.localScale -= new Vector3(0.5f, 0.5f, 0.5f);
+        Renderer rend = objectToChange.GetComponent<Renderer>();
+        rend.material.shader = Shader.Find("_Color");
+        rend.material.SetColor("_Color", Color.blue);
+
+    }
+   
+    //hence this bullshit
+
+   
 
 
 }
