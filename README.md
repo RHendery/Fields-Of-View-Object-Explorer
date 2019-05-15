@@ -1,6 +1,7 @@
 # Fields-Of-View-Object-Explorer : Unity Project
 
-Unity Version 2019.1.1
+Unity Version ~~2019.1.1~~
+2018.4.0 (LTS)
 
 dependencies:
 
