@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: b37d7da16fca07b49b8c83ad3f70a0fa
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - red_dot: {fileID: 8016718697861108063, guid: 291a29bbeca4a1645b2e3c9467bf3b69,
+      type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
