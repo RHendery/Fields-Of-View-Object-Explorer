@@ -23,7 +23,12 @@ public class network : MonoBehaviour
 
 
         //now we put some nodes at the intersections of the line segments
-        int i = 0;
+
+        //THIS IS A TEST
+        GameObject temp = Instantiate(sphere, points1[0], Quaternion.identity);
+        temp.name = "kinetoscope_node"; //give it a tag we can refer to later
+
+        int i = 1;
         while (i < points1.Length)
         {
            GameObject s = Instantiate(sphere, points1[i], Quaternion.identity);
@@ -85,8 +90,7 @@ public class network : MonoBehaviour
     
     }
 
-    //Can't figure out how to attach these correctly to HoverBegin if the parameter isn't passed until runtime.
-    //which is why the specific node is hard coded here.
+    /*
     public void EnlargeNode()
     {
        GameObject objectToChange = GameObject.Find("point2_2");
@@ -109,7 +113,7 @@ public class network : MonoBehaviour
         rend.material.SetColor("_Color", Color.blue);
 
     }
-   
+   */
     //hence this bullshit
 
    
