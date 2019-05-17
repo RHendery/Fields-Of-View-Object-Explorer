@@ -4,12 +4,10 @@ using UnityEngine;
 
 public class network : MonoBehaviour
 {
-    public Material LineMaterial;
+   
     string line1, line2, line3, line4;
     public GameObject sphere;
     GameObject monkey3_point, monkey2_point, monkey1_point;
-
-   // public Object newPrefab;
 
     // Start is called before the first frame update
     void Start()  
@@ -33,6 +31,10 @@ public class network : MonoBehaviour
         {
            GameObject s = Instantiate(sphere, points1[i], Quaternion.identity);
             s.name = string.Concat("point1_", i.ToString()); //give it a tag we can refer to later
+
+            Renderer rend = s.GetComponent<Renderer>(); //this is just to make sure it's the same blue we will change it back to later in the flashNodes script.
+            rend.material.SetColor("_Color", Color.blue);
+
             i++;
         }
 
@@ -79,44 +81,18 @@ public class network : MonoBehaviour
     {
         GameObject obj = new GameObject(line_name);
         var line = obj.AddComponent<LineRenderer>();
-       
-     //   line.sortingLayerName = "OnTop";
-        line.sortingOrder = 5;
+
+        line.sortingOrder = 1;
         line.positionCount = points.Length;
         line.SetPositions(points);
-        line.widthMultiplier = 0.006f;
+        line.widthMultiplier = 0.002f;
         line.useWorldSpace = true;
-        line.material = LineMaterial;
-    
-    }
-
-    /*
-    public void EnlargeNode()
-    {
-       GameObject objectToChange = GameObject.Find("point2_2");
-       objectToChange.transform.localScale += new Vector3(0.5f, 0.5f, 0.5f);
-
-        Renderer rend = objectToChange.GetComponent<Renderer>();
-        //Set the main Color of the Material to green
-        rend.material.shader = Shader.Find("_Color");
-        rend.material.SetColor("_Color", Color.red);
-
+        line.material = new Material(Shader.Find("Particles/Standard Unlit"));
+        line.material.SetColor("_Color", Color.blue);
 
     }
 
-    public void ShrinkNode()
-    {
-        GameObject objectToChange = GameObject.Find("point2_2");
-        objectToChange.transform.localScale -= new Vector3(0.5f, 0.5f, 0.5f);
-        Renderer rend = objectToChange.GetComponent<Renderer>();
-        rend.material.shader = Shader.Find("_Color");
-        rend.material.SetColor("_Color", Color.blue);
 
-    }
-   */
-    //hence this bullshit
-
-   
 
 
 }
