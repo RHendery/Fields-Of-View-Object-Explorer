@@ -7,13 +7,15 @@ public class flashNodes : MonoBehaviour
 
     // public GameObject node;
     GameObject objectToChange;
+    float incrementSize = 0.5f;
 
 
     // Start is called before the first frame update
     void Start()
     {
        objectToChange  = GameObject.Find(string.Concat(gameObject.name, "_node"));
-        Debug.Log(gameObject.name);
+        
+    //    Debug.Log(string.Concat("The name of the objectToChange gameObject is: ", objectToChange.name));
     }
 
     // Update is called once per frame
@@ -24,20 +26,25 @@ public class flashNodes : MonoBehaviour
 
     public void EnlargeNode()
     {
-        objectToChange.transform.localScale += new Vector3(0.5f, 0.5f, 0.5f);
-        Renderer rend = objectToChange.GetComponent<Renderer>();
-        //Set the main Color of the Material to red
-        rend.material.shader = Shader.Find("_Color");
-        rend.material.SetColor("_Color", Color.red);
+        //make the node bigger
+        objectToChange.transform.localScale += new Vector3(incrementSize, incrementSize, incrementSize);
+      //  Debug.Log(string.Concat("The name of the objectToChange gameObject that the EnlargeNode is actually operating on is: ", objectToChange.name));
 
-   
+        Renderer rend = objectToChange.GetComponent<Renderer>();
+        //Set the main Color of the Material to green
+        rend.material.SetColor("_Color", Color.green);
+
+  
+
+
     }
 
     public void ShrinkNode()
     {
-        objectToChange.transform.localScale -= new Vector3(0.5f, 0.5f, 0.5f);
+        //reset the node size
+        objectToChange.transform.localScale -= new Vector3(incrementSize, incrementSize, incrementSize);
         Renderer rend = objectToChange.GetComponent<Renderer>();
-        rend.material.shader = Shader.Find("_Color");
+        //set it back to blue
         rend.material.SetColor("_Color", Color.blue);
 
     }
