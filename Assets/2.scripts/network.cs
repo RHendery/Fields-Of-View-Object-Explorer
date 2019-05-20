@@ -5,10 +5,10 @@ using UnityEngine;
 public class network : MonoBehaviour
 {
    
-    string line1, line2, line3, line4;
+    //LET'S DECLARE A BUNCH OF STUFF
+
     public GameObject sphere;
-    GameObject monkey3_point, monkey2_point, monkey1_point;
-    System.IO.StreamReader objectfile = new System.IO.StreamReader(@"C: \Users\DHRG\Desktop\objects.csv");
+    System.IO.StreamReader objectfile = new System.IO.StreamReader(@"C: \Users\DHRG\Desktop\objects.csv"); // I suspect this isn't the ideal way to do this - should probably use "using" instead?
     System.IO.StreamReader edgesfile = new System.IO.StreamReader(@"C: \Users\DHRG\Desktop\edgelist.csv");
 
     struct DataPoint //creating a new thing here so that we can easily add other properties for whatever columns of the spreadsheet we end up having
@@ -19,86 +19,51 @@ public class network : MonoBehaviour
 
     struct Edge //apparently Unity hasn't heard of Tuples so I'm rolling my own
     {
-        public string source;
-        public string target;
+        public string source; //the id of the source
+        public string target; // the id of the target
     }
 
-    // Start is called before the first frame update
-    void Start()  
+    
+
+    // BUILD THE NETWORK ON INITALISING A LINE GAMEOBJECT, SURE WHY NOT?
+    void Start()
     {
 
         List<DataPoint> objectList = readObjectFile(); //get list of museum object names and ids from csv file on Desktop (can change location above) 
+        objectfile.Close();
 
-        //for each item in the datapoints list, add a sphere.
 
-        for(int i =0; i<objectList.Count; i++)
+        for (int i = 0; i < objectList.Count; i++) //for each item in the datapoints list, add a sphere to the world.
         {
-            
+
             GameObject temp = Instantiate(sphere, new Vector3(Random.Range(-2, -15), Random.Range(0, 5), Random.Range(-5, 5)), Quaternion.identity); //for now generating them in random locations that should be visible
-            temp.name = objectList[i].id; //give it a name we can refer to later - this is the museum's object ID number, e.g. H6653-3 or similar. Guaranteed unique, unlike the label
-        }
-
-        
-
-        var points1 = new Vector3[3]; //I should really refactor this now I have it working
-        points1[0] = new Vector3(-10, 5, -2);
-        points1[1] = new Vector3(-15, 5, 2);
-        points1[2] = new Vector3(-15, 5, 2);
-
-        SetupLine(points1, "line1");
-
-
-        //now we put some nodes at the intersections of the line segments
-        List<Edge> edgeList = readEdgesFile();
-
-        //ADD MORE CODE HERE. Note: somehow I've broken LEAP.
-     
-     
-        for (int i = 1; i < points1.Length; i++)
-        {
-           GameObject s = Instantiate(sphere, points1[i], Quaternion.identity);
-            s.name = string.Concat("point1_", i.ToString()); //give it a tag we can refer to later
-
-            Renderer rend = s.GetComponent<Renderer>(); //this is just to make sure it's the same blue we will change it back to later in the flashNodes script.
+            temp.name = string.Concat(objectList[i].id, "_node"); //give it a name we can refer to later - this is the museum's object ID number, e.g. H6653-3 or similar. Guaranteed unique, unlike the label, plus "_node" otherwise might be the same as the actual 3D object in the space if we are also using the id numbers for names there.
+            Renderer rend = temp.GetComponent<Renderer>(); //this is just to make sure it's the same blue we will change it back to later in the flashNodes script.
             rend.material.SetColor("_Color", Color.blue);
 
-         
-        }
+            //maybe put some code in here that checks whether there is an object in the game space that has the same id number and attaches other spreadsheet information to that object somehow.
+        } 
 
 
-        var points2 = new Vector3[3];
-        points2[0] = new Vector3(-5, 5, 2);
-        points2[1] = new Vector3(-15, 5, 2);
-        points2[2] = new Vector3(-5, 0, 2);
-        SetupLine(points2, "line2");
+        List<Edge> edgeList = readEdgesFile(); //see below
+        edgesfile.Close();
 
-        int j = 0;
-        while (j < points2.Length)
+
+        
+        for (int i = 0; i < edgeList.Count; i++) //for each pair in the edge list, find the location of each of the objects and put them into a 2-array of vector3s, and send it to SetUpLine()
         {
-            GameObject s = Instantiate(sphere, points2[j], Quaternion.identity);
-            s.name = string.Concat("point2_", j.ToString());
-            j++;
-        }
+            var tempV3List = new Vector3[2];
 
+            tempV3List[0] = GameObject.Find(string.Concat(edgeList[i].source, "_node")).transform.position;
+            tempV3List[1] = GameObject.Find(string.Concat(edgeList[i].target, "_node")).transform.position;
 
-        var points3 = new Vector3[3];
-        points3[0] = new Vector3(-5, 2, 2);
-        points3[1] = new Vector3(-5, 0, 2);
-        points3[2] = new Vector3(-2, 0, 0);
-        SetupLine(points3, "line3");
-
-        int k = 0;
-        while (k < points3.Length)
-        {
-            GameObject s = Instantiate(sphere, points3[k], Quaternion.identity);
-            s.name = string.Concat("point3_", k.ToString());
-            k++;
+            SetupLine(tempV3List, string.Concat("line_", i));
         }
 
     }
 
-    // Update is called once per frame
-    void Update()
+ 
+    void Update()   // Update is called once per frame
     {
         
     }
@@ -108,7 +73,6 @@ public class network : MonoBehaviour
     {
         GameObject obj = new GameObject(line_name);
         var line = obj.AddComponent<LineRenderer>();
-
         line.sortingOrder = 1;
         line.positionCount = points.Length;
         line.SetPositions(points);
@@ -119,9 +83,8 @@ public class network : MonoBehaviour
 
     }
 
-    List<DataPoint> readObjectFile() 
+    List<DataPoint> readObjectFile()  //this grabs the objects from the objectfile and puts them into a list
     {
-
         string sLine;
         
         List<DataPoint> aDataPoints = new List<DataPoint>();
@@ -140,7 +103,6 @@ public class network : MonoBehaviour
                 tempDataPoint.label = fields[1];
                 aDataPoints.Add(tempDataPoint);
         }
-        objectfile.Close();
 
         return aDataPoints;
     }
@@ -167,8 +129,7 @@ public class network : MonoBehaviour
             tempEdge.target = fields[1];
             networkEdgeList.Add(tempEdge);
         }
-        edgesfile.Close();
-
+        
         return networkEdgeList;
     }
 
