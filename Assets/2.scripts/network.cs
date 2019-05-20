@@ -8,8 +8,9 @@ public class network : MonoBehaviour
     //LET'S DECLARE A BUNCH OF STUFF
 
     public GameObject sphere;
-    System.IO.StreamReader objectfile = new System.IO.StreamReader(@"C: \Users\DHRG\Desktop\objects.csv"); // I suspect this isn't the ideal way to do this - should probably use "using" instead?
-    System.IO.StreamReader edgesfile = new System.IO.StreamReader(@"C: \Users\DHRG\Desktop\edgelist.csv");
+    // System.IO.StreamReader objectfile = new System.IO.StreamReader(@"C: \Users\DHRG\Desktop\objects.csv"); // I suspect this isn't the ideal way to do this - should probably use "using" instead?
+    // System.IO.StreamReader edgesfile = new System.IO.StreamReader(@"C: \Users\DHRG\Desktop\edgelist.csv");
+      
 
     struct DataPoint //creating a new thing here so that we can easily add other properties for whatever columns of the spreadsheet we end up having
     {
@@ -30,8 +31,7 @@ public class network : MonoBehaviour
     {
 
         List<DataPoint> objectList = readObjectFile(); //get list of museum object names and ids from csv file on Desktop (can change location above) 
-        objectfile.Close();
-
+        
 
         for (int i = 0; i < objectList.Count; i++) //for each item in the datapoints list, add a sphere to the world.
         {
@@ -46,7 +46,7 @@ public class network : MonoBehaviour
 
 
         List<Edge> edgeList = readEdgesFile(); //see below
-        edgesfile.Close();
+       
 
 
         
@@ -88,6 +88,7 @@ public class network : MonoBehaviour
         string sLine;
         
         List<DataPoint> aDataPoints = new List<DataPoint>();
+        System.IO.StreamReader objectfile = new System.IO.StreamReader(string.Concat(Application.dataPath, @"\objects.csv")); // I suspect this isn't the ideal way to do this - should probably use "using" instead?
 
         // First line in the file is headings so skip over it
         sLine = objectfile.ReadLine();
@@ -104,6 +105,7 @@ public class network : MonoBehaviour
                 aDataPoints.Add(tempDataPoint);
         }
 
+        objectfile.Close();
         return aDataPoints;
     }
 
@@ -114,6 +116,9 @@ public class network : MonoBehaviour
         string sLine;
 
         List<Edge> networkEdgeList = new List<Edge>();
+
+        System.IO.StreamReader edgesfile = new System.IO.StreamReader(string.Concat(Application.dataPath, @"\edgelist.csv"));
+
 
         // First line in the file is headings so skip over it
         sLine = edgesfile.ReadLine();
@@ -129,7 +134,8 @@ public class network : MonoBehaviour
             tempEdge.target = fields[1];
             networkEdgeList.Add(tempEdge);
         }
-        
+
+        edgesfile.Close();
         return networkEdgeList;
     }
 
