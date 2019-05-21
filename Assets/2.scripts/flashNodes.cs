@@ -30,7 +30,7 @@ public class flashNodes : MonoBehaviour
 
         //make the node bigger
         objectToChange.transform.localScale += new Vector3(incrementSize, incrementSize, incrementSize);
-        Debug.Log(string.Concat("The name of the objectToChange gameObject that the EnlargeNode is actually operating on is: ", objectToChange.name));
+      //  Debug.Log(string.Concat("The name of the objectToChange gameObject that the EnlargeNode is actually operating on is: ", objectToChange.name));
 
         Renderer rend = objectToChange.GetComponent<Renderer>();
         //Set the main Color of the Material to green
