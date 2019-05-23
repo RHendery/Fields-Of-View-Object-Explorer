@@ -1,5 +1,5 @@
-﻿id,name
-B1887-1,kinetoscope
-H6653-3,wooden_viewer
-H9781-1,metal_viewer
-2010-46-1-2,linseed_can
+﻿id,name,audio
+B1887-1,kinetoscope,audio1.mp3
+H6653-3,wooden_viewer,
+H9781-1,metal_viewer,
+2010-46-1-2,linseed_can,audio2.mp3

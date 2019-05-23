@@ -3,12 +3,16 @@ using UnityEngine;
 using Leap;
 using Leap.Unity.Interaction;
 
+//note: andrew suggested rewriting so this whole script runs on grasp begin instead of on grasp stay, and putting a flag for whether something is being held and hands moved appropriately, then running the grow loop if the flag is raised. That way can use the "update" function without it interfering with Leap's updates for grasp stay.
+//also need to add a maximum and minimum size limit.
+
 public class resizeObject : MonoBehaviour
 {
     float incrementSize = 0.01f; //increment to increase/decrease by. Change to speed up or slow down
     Controller controller;
     float previousPosition =0;
     float currentPosition = 0;
+
 
 
     // Start is called before the first frame update
@@ -21,7 +25,6 @@ public class resizeObject : MonoBehaviour
     void Update()
     {
 
-       
 
     }
 
