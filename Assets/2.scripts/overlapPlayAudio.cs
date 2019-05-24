@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class overlapShowCard : MonoBehaviour
+public class overlapPlayAudio : MonoBehaviour
 {
     float sphereRadius;
 
@@ -18,7 +18,7 @@ public class overlapShowCard : MonoBehaviour
         if (other.tag == "museumObject")
         {
             print(other.name);
-            other.gameObject.SendMessage("attachTheCard", SendMessageOptions.DontRequireReceiver);
+            other.gameObject.SendMessage("playSound", SendMessageOptions.DontRequireReceiver);
         }
     }
 
@@ -28,7 +28,7 @@ public class overlapShowCard : MonoBehaviour
         if (other.tag == "museumObject")
         {
             print(other.name);
-            other.gameObject.SendMessage("detachTheCard", SendMessageOptions.DontRequireReceiver);
+            other.gameObject.SendMessage("stopPlayingSound", SendMessageOptions.DontRequireReceiver);
         }
     }
 
