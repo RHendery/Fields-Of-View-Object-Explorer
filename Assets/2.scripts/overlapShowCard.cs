@@ -5,6 +5,8 @@ using UnityEngine;
 public class overlapShowCard : MonoBehaviour
 {
     float sphereRadius;
+    public float lowerSchemaRange;
+    public float upperSchemaRange;
 
     void Start()
     {
@@ -18,7 +20,7 @@ public class overlapShowCard : MonoBehaviour
         if (other.tag == "museumObject")
         {
             print(other.name);
-            other.gameObject.SendMessage("attachTheCard", SendMessageOptions.DontRequireReceiver);
+            other.gameObject.SendMessage("attachTheCard", lowerSchemaRange + "~" + upperSchemaRange, SendMessageOptions.DontRequireReceiver);
         }
     }
 

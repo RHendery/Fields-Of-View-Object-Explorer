@@ -7,6 +7,7 @@ public class attachCard : MonoBehaviour
     public GameObject attachmentPoint;
     public GameObject indexCard;
     GameObject theInstatiatedIndexCard;
+    public float zoneParameter;
 
     // Start is called before the first frame update
     void Start()
@@ -23,10 +24,17 @@ public class attachCard : MonoBehaviour
         
     }
 
-    public void attachTheCard()
+    public void attachTheCard(string lower_upper)
     {
-        theInstatiatedIndexCard = Instantiate(indexCard, attachmentPoint.transform.position, attachmentPoint.transform.rotation);
-        theInstatiatedIndexCard.transform.parent = attachmentPoint.transform;
+        string[] theParams = lower_upper.Split('~');
+        print(theParams[0]);
+        print(theParams[1]);
+
+        if (zoneParameter >= float.Parse(theParams[0]) && zoneParameter <= float.Parse(theParams[1]))
+        {
+            theInstatiatedIndexCard = Instantiate(indexCard, attachmentPoint.transform.position, attachmentPoint.transform.rotation);
+            theInstatiatedIndexCard.transform.parent = attachmentPoint.transform;
+        }
     }
 
     public void detachTheCard()
