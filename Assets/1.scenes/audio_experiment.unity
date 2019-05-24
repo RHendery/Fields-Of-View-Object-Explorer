@@ -2381,6 +2381,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77e8ca5b4a8cc514ba8bfa59fecc3ccb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lowerSchemaRange: 0
+  upperSchemaRange: 0.5
 --- !u!135 &1640096314
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2708,6 +2710,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   theTouchSound: {fileID: 8300000, guid: 1ef945b1bfd39f943aba7513e1ade1fa, type: 3}
+  audioRangeParameter: 0.2
 --- !u!1 &1932705839
 GameObject:
   m_ObjectHideFlags: 0
