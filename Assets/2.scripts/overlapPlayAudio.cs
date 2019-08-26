@@ -5,6 +5,8 @@ using UnityEngine;
 public class overlapPlayAudio : MonoBehaviour
 {
     float sphereRadius;
+    public float lowerSchemaRange;
+    public float upperSchemaRange;
 
     void Start()
     {
@@ -18,7 +20,7 @@ public class overlapPlayAudio : MonoBehaviour
         if (other.tag == "museumObject")
         {
             print(other.name);
-            other.gameObject.SendMessage("playSound", SendMessageOptions.DontRequireReceiver);
+            other.gameObject.SendMessage("playSound", lowerSchemaRange+"~"+upperSchemaRange, SendMessageOptions.DontRequireReceiver);
         }
     }
 
