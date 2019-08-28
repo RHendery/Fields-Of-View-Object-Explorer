@@ -26,9 +26,9 @@
     "objectName": "linseedCan",
     "date": 2001,
     "infoWisdom": 0.1,
-    "importance": 1,
+    "importance": 0.3,
     "type": 2,
-    "fileName": "advertisment.jpeg",
+    "fileName": "advertisment",
     "text": "",
     "quadrant": 3
   },
@@ -40,7 +40,7 @@
     "importance": 0.5,
     "type": 3,
     "fileName": "",
-    "text": "This is a poem and it is not very good as I found some oars to row-em",
+    "text": "This is a poem \n it is not very good \n I have some boats and \n I found some oars to row-em",
     "quadrant": 1
   }
 ]}

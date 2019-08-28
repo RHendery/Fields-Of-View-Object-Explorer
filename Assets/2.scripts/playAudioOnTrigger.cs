@@ -24,6 +24,11 @@ public class playAudioOnTrigger : MonoBehaviour
         {
             theAttachedAudioSource.Play();
         }
+
+        if(other.tag == "museumObject" && transform.childCount > 0)
+        {
+            transform.GetChild(0).transform.gameObject.SetActive(true);
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -31,6 +36,11 @@ public class playAudioOnTrigger : MonoBehaviour
         if (other.tag == "museumObject" && theAttachedAudioSource.clip != null)
         {
             theAttachedAudioSource.Stop();
+        }
+
+        if (other.tag == "museumObject" && transform.childCount > 0)
+        {
+            transform.GetChild(0).transform.gameObject.SetActive(false);
         }
     }
 }

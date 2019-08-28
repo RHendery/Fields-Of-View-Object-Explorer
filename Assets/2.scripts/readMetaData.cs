@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using TMPro;
 
 public class readMetaData : MonoBehaviour
 {
@@ -26,7 +27,7 @@ public class readMetaData : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        //loadData();
+       // loadData();
     }
 
     public void pickUp()
@@ -67,10 +68,11 @@ public class readMetaData : MonoBehaviour
                 float degree = helpers.Remap(loadedData[i].date, lowestDate, highestDate, 0, 180);
 
                 // what is the position on a circumference?
+                // need to make relative to the object when touched
                 //(x, y) = (12 * sin(115), 12 * cos(115))
-                float xPosOnradius = positionradius * Mathf.Sin(degree);
-                float zPosOnradius = positionradius * Mathf.Cos(degree);
-                float yPos = this.transform.position.y;
+                float xPosOnradius = positionradius * Mathf.Sin(degree) + transform.position.x;
+                float zPosOnradius = positionradius * Mathf.Cos(degree) + transform.position.z;
+                float yPos = this.transform.position.y + 0.5f;
 
                 //GameObject thisMetaDataObject = Instantiate(metaDataSphere, new Vector3(transform.position.x, transform.position.y, transform.position.z + loadedData[i].infoWisdom), Quaternion.identity);
                 GameObject thisMetaDataObject = Instantiate(metaDataSphere, new Vector3(xPosOnradius, yPos, zPosOnradius), Quaternion.identity);
@@ -83,6 +85,34 @@ public class readMetaData : MonoBehaviour
                     print(loadedData[i].fileName);
                     AudioSource sphereAudioSource = thisMetaDataObject.GetComponent<AudioSource>();
                     sphereAudioSource.clip = Resources.Load<AudioClip>(loadedData[i].fileName); ;
+                }
+
+                if(loadedData[i].type == 2)
+                {
+                    /*Renderer childRenderer = thisMetaDataObject.GetComponentInChildren<Renderer>();
+                    print(loadedData[i].fileName);
+                    childRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(loadedData[i].fileName));
+                    */
+
+                    GameObject SphereChild = thisMetaDataObject.transform.GetChild(0).gameObject;
+                    Renderer sphereChildRenderer = SphereChild.GetComponent<Renderer>();
+                    sphereChildRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(loadedData[i].fileName));
+
+
+                }
+                else
+                {
+                    Destroy(thisMetaDataObject.transform.GetChild(0).gameObject);
+                }
+
+                if(loadedData[i].type == 3)
+                {
+                    TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
+                    sphereText.text = loadedData[i].text;
+                }
+                else
+                {
+                    Destroy(thisMetaDataObject.transform.GetChild(1).gameObject);
                 }
 
                 // save this object in the array
