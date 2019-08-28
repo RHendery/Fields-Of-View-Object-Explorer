@@ -1,0 +1,46 @@
+{"Items":[
+  {
+    "itemNumber": 1,
+    "objectName": "linseedCan",
+    "date": 1800,
+    "infoWisdom": 0.5,
+    "importance": 1,
+    "type": 1,
+    "fileName": "story",
+    "text": "",
+    "quadrant": 1
+  },
+  {
+    "itemNumber": 2,
+    "objectName": "linseedCan",
+    "date": 1900,
+    "infoWisdom": 0.2,
+    "importance": 0.3,
+    "type": 1,
+    "fileName": "byproducts",
+    "text": "",
+    "quadrant": 2
+  },
+  {
+    "itemNumber": 3,
+    "objectName": "linseedCan",
+    "date": 2001,
+    "infoWisdom": 0.1,
+    "importance": 1,
+    "type": 2,
+    "fileName": "advertisment.jpeg",
+    "text": "",
+    "quadrant": 3
+  },
+  {
+    "itemNumber": 4,
+    "objectName": "linseedCan",
+    "date": 2001,
+    "infoWisdom": 1,
+    "importance": 0.5,
+    "type": 3,
+    "fileName": "",
+    "text": "This is a poem and it is not very good as I found some oars to row-em",
+    "quadrant": 1
+  }
+]}
