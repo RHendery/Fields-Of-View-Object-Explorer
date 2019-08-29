@@ -18,6 +18,8 @@ public class readMetaData : MonoBehaviour
     [Header("GO represents single piece of metadata")]
     public GameObject metaDataSphere;
 
+    public GameObject ring;
+
     // array to read json language data into
     private objectMetaData[] metaData;
 
@@ -52,7 +54,7 @@ public class readMetaData : MonoBehaviour
 
             // keep record of all obejcts we create so we can get ridf of them easily
             // this may cause issues with garbage collection, but lets see
-            loadedMetaDataObjects = new GameObject[loadedData.Length];
+            loadedMetaDataObjects = new GameObject[loadedData.Length * 2];
 
             for (int i = 0; i < loadedData.Length; i++)
             {
@@ -62,20 +64,27 @@ public class readMetaData : MonoBehaviour
                 // position on ARC from date remapped to degrees
 
                 // what is the radius?
-                float positionradius = loadedData[i].infoWisdom * 2;
+                //float positionradius = loadedData[i].infoWisdom * 2;
+                // map info wisdom range from 0-1 to 0-2
+                float positionradius = helpers.Remap(loadedData[i].infoWisdom, 0, 1, 0, 2);
 
                 // what is our remapped date to a degree
                 float degree = helpers.Remap(loadedData[i].date, lowestDate, highestDate, 0, 180);
+                print("degree is: " + degree);
 
                 // what is the position on a circumference?
                 // need to make relative to the object when touched
                 //(x, y) = (12 * sin(115), 12 * cos(115))
                 float xPosOnradius = positionradius * Mathf.Sin(degree) + transform.position.x;
                 float zPosOnradius = positionradius * Mathf.Cos(degree) + transform.position.z;
-                float yPos = this.transform.position.y + 0.5f;
+                float yPos = this.transform.position.y; // + 0.5f;
 
                 //GameObject thisMetaDataObject = Instantiate(metaDataSphere, new Vector3(transform.position.x, transform.position.y, transform.position.z + loadedData[i].infoWisdom), Quaternion.identity);
                 GameObject thisMetaDataObject = Instantiate(metaDataSphere, new Vector3(xPosOnradius, yPos, zPosOnradius), Quaternion.identity);
+
+                //instatiate a ring as a visual clue
+                GameObject visualRing = Instantiate(ring, new Vector3(transform.position.x, yPos, transform.position.z), Quaternion.identity);
+                visualRing.transform.localScale = new Vector3(positionradius, 0.01f, positionradius);
 
                 thisMetaDataObject.transform.localScale = new Vector3(loadedData[i].importance, loadedData[i].importance, loadedData[i].importance);
 
@@ -117,6 +126,7 @@ public class readMetaData : MonoBehaviour
 
                 // save this object in the array
                 loadedMetaDataObjects[i] = thisMetaDataObject;
+                loadedMetaDataObjects[i + loadedData.Length] = visualRing;
             }
         }
     }
