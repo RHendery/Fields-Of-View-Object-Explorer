@@ -29,7 +29,7 @@ public class readMetaData : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-       // loadData();
+       //loadData();
     }
 
     public void pickUp()
@@ -69,14 +69,14 @@ public class readMetaData : MonoBehaviour
                 float positionradius = helpers.Remap(loadedData[i].infoWisdom, 0, 1, 0, 2);
 
                 // what is our remapped date to a degree
-                float degree = helpers.Remap(loadedData[i].date, lowestDate, highestDate, 0, 180);
-                print("degree is: " + degree);
+                float degree = helpers.Remap(loadedData[i].date, lowestDate, highestDate, -90,90) + Mathf.Abs(Camera.main.transform.eulerAngles.y);
+                print("camera Angle is: " + Camera.main.transform.eulerAngles.y / 2);
 
                 // what is the position on a circumference?
                 // need to make relative to the object when touched
                 //(x, y) = (12 * sin(115), 12 * cos(115))
-                float xPosOnradius = positionradius * Mathf.Sin(degree) + transform.position.x;
-                float zPosOnradius = positionradius * Mathf.Cos(degree) + transform.position.z;
+                float xPosOnradius = positionradius * Mathf.Sin(degree * Mathf.Deg2Rad) + transform.position.x;
+                float zPosOnradius = positionradius * Mathf.Cos(degree * Mathf.Deg2Rad) + transform.position.z;
                 float yPos = this.transform.position.y; // + 0.5f;
 
                 //GameObject thisMetaDataObject = Instantiate(metaDataSphere, new Vector3(transform.position.x, transform.position.y, transform.position.z + loadedData[i].infoWisdom), Quaternion.identity);
@@ -86,14 +86,17 @@ public class readMetaData : MonoBehaviour
                 GameObject visualRing = Instantiate(ring, new Vector3(transform.position.x, yPos, transform.position.z), Quaternion.identity);
                 visualRing.transform.localScale = new Vector3(positionradius, 0.01f, positionradius);
 
-                thisMetaDataObject.transform.localScale = new Vector3(loadedData[i].importance, loadedData[i].importance, loadedData[i].importance);
+                thisMetaDataObject.transform.localScale = new Vector3(loadedData[i].importance/2, loadedData[i].importance/2, loadedData[i].importance/2);
 
                 // are we an audio type?
                 if(loadedData[i].type == 1)
                 {
                     print(loadedData[i].fileName);
                     AudioSource sphereAudioSource = thisMetaDataObject.GetComponent<AudioSource>();
-                    sphereAudioSource.clip = Resources.Load<AudioClip>(loadedData[i].fileName); ;
+                    sphereAudioSource.clip = Resources.Load<AudioClip>(loadedData[i].fileName);
+
+                    TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
+                    sphereText.text = loadedData[i].text;
                 }
 
                 if(loadedData[i].type == 2)
@@ -107,7 +110,8 @@ public class readMetaData : MonoBehaviour
                     Renderer sphereChildRenderer = SphereChild.GetComponent<Renderer>();
                     sphereChildRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(loadedData[i].fileName));
 
-
+                    TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
+                    sphereText.text = loadedData[i].text;
                 }
                 else
                 {
@@ -118,10 +122,6 @@ public class readMetaData : MonoBehaviour
                 {
                     TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
                     sphereText.text = loadedData[i].text;
-                }
-                else
-                {
-                    Destroy(thisMetaDataObject.transform.GetChild(1).gameObject);
                 }
 
                 // save this object in the array

@@ -165,7 +165,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 196347413}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0.077, y: 0.894, z: 0.574}
+  m_LocalPosition: {x: -0.001, y: 0.822, z: 0.548}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -222,8 +222,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   filename: objectData.json
-  lowestDate: 1800
-  highestDate: 2001
+  lowestDate: 1700
+  highestDate: 2020
   metaDataSphere: {fileID: 6162900901076695757, guid: 5049ca1608a2621419fe70608c92a806,
     type: 3}
   ring: {fileID: 1228749553934793545, guid: 9ccb6f4d040002a40891f37648a3f1ae, type: 3}
@@ -688,7 +688,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &845276496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -912,7 +912,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 845276495}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.083, y: 0.589, z: 0.583}
+  m_LocalPosition: {x: -0.083, y: 0.589, z: 0.627}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 0}

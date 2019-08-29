@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class playAudioOnTrigger : MonoBehaviour
 {
@@ -27,7 +28,17 @@ public class playAudioOnTrigger : MonoBehaviour
 
         if(other.tag == "museumObject" && transform.childCount > 0)
         {
-            transform.GetChild(0).transform.gameObject.SetActive(true);
+            //transform.GetChild(0).transform.gameObject.SetActive(true);
+            foreach (Transform child in transform)
+            {
+                //child.gameObject.SetActive(true);
+                child.gameObject.GetComponent<Renderer>().material.color = new Color(1,1,1,1);
+                if (child.gameObject.GetComponent<TextMeshPro>() != null)
+                {
+                    child.gameObject.GetComponent<TextMeshPro>().color = new Color(1, 1, 1, 1);
+                }
+                child.gameObject.transform.localScale = child.gameObject.transform.localScale * 2;
+            }
         }
     }
 
@@ -40,7 +51,18 @@ public class playAudioOnTrigger : MonoBehaviour
 
         if (other.tag == "museumObject" && transform.childCount > 0)
         {
-            transform.GetChild(0).transform.gameObject.SetActive(false);
+            //transform.GetChild(0).transform.gameObject.SetActive(false);
+            foreach (Transform child in transform)
+            {
+                //child.gameObject.SetActive(false);
+                child.gameObject.GetComponent<Renderer>().material.color = new Color(1, 1, 1, 0.25f);
+                if (child.gameObject.GetComponent<TextMeshPro>() != null)
+                {
+                    child.gameObject.GetComponent<TextMeshPro>().color = new Color(1, 1, 1, 0.15f);
+                }
+
+                child.gameObject.transform.localScale = child.gameObject.transform.localScale / 2;
+            }
         }
     }
 }
