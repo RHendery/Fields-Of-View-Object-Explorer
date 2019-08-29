@@ -1,0 +1,16 @@
+{
+  "source": "Unity",
+  "applications": [
+    {
+      "app_key": "application.generated.unity.hands.exe",
+      "launch_type": "url",
+      "url": "steam://launch/",
+      "action_manifest_path": "D:\\projects in github\\Fields-Of-View-Object-Explorer\\actions.json",
+      "strings": {
+        "en_us": {
+          "name": "hands [Testing]"
+        }
+      }
+    }
+  ]
+}
