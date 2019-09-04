@@ -222,12 +222,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flipAxes: 0
-  presentOnGrid: 1
-  arcTheta: 180
+  presentOnGrid: 0
+  stepLayout: 1
+  arcTheta: 270
   theLineRenderer: {fileID: 228200470}
-  filename: objectData.json
-  lowestDate: 1800
-  highestDate: 2001
+  filename: objectData_actual.json
+  lowestDate: 1820
+  highestDate: 1990
   metaDataSphere: {fileID: 6162900901076695757, guid: 5049ca1608a2621419fe70608c92a806,
     type: 3}
   ring: {fileID: 1228749553934793545, guid: 9ccb6f4d040002a40891f37648a3f1ae, type: 3}
@@ -407,7 +408,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!120 &228200470
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -849,6 +850,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   flipAxes: 0
   presentOnGrid: 0
+  stepLayout: 0
   arcTheta: 180
   theLineRenderer: {fileID: 0}
   filename: objectData.json

@@ -8,6 +8,7 @@ public class readMetaData : MonoBehaviour
 {
     public bool flipAxes = false;
     public bool presentOnGrid = false;
+    public bool stepLayout = false;
     public float arcTheta = 180;
     public LineRenderer theLineRenderer;
     
@@ -114,6 +115,11 @@ public class readMetaData : MonoBehaviour
                     float zPosOnradius = positionradius * Mathf.Cos(degree * Mathf.Deg2Rad) + transform.position.z;
                     float yPos = this.transform.position.y; // + 0.5f;
 
+                    if (stepLayout)
+                    {
+                        yPos = yPos + positionradius / 2;
+                    }
+
                     //GameObject thisMetaDataObject = Instantiate(metaDataSphere, new Vector3(transform.position.x, transform.position.y, transform.position.z + loadedData[i].infoWisdom), Quaternion.identity);
                     GameObject thisMetaDataObject = Instantiate(metaDataSphere, new Vector3(xPosOnradius, yPos, zPosOnradius), Quaternion.identity);
 
@@ -140,10 +146,17 @@ public class readMetaData : MonoBehaviour
                         print(loadedData[i].fileName);
                         childRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(loadedData[i].fileName));
                         */
+                        if (Resources.Load<Texture2D>(loadedData[i].fileName) != null)
+                        {
+                            GameObject SphereChild = thisMetaDataObject.transform.GetChild(0).gameObject;
+                            Renderer sphereChildRenderer = SphereChild.GetComponent<Renderer>();
+                            sphereChildRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(loadedData[i].fileName));
+                        }
+                        else
+                        {
+                            thisMetaDataObject.transform.GetChild(0).gameObject.SetActive(false);
+                        }
 
-                        GameObject SphereChild = thisMetaDataObject.transform.GetChild(0).gameObject;
-                        Renderer sphereChildRenderer = SphereChild.GetComponent<Renderer>();
-                        sphereChildRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(loadedData[i].fileName));
 
                         TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
                         sphereText.text = loadedData[i].text;
@@ -166,8 +179,8 @@ public class readMetaData : MonoBehaviour
 
                 else if (presentOnGrid)
                 {
-                    float remappedDate = helpers.Remap(loadedData[i].date, lowestDate, highestDate, -1f, 1f);
-                    float infoWisdomScale = helpers.Remap(loadedData[i].infoWisdom, 0, 1, 0, 1);
+                    float remappedDate = helpers.Remap(loadedData[i].date, lowestDate, highestDate, -2f, 2f);
+                    float infoWisdomScale = helpers.Remap(loadedData[i].infoWisdom, 0, 1, 0, 4);
 
                     GameObject thisMetaDataObject = Instantiate(metaDataSphere, new Vector3(remappedDate, infoWisdomScale, 1), Quaternion.identity);
 

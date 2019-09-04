@@ -2,15 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using DentedPixel;
 
 public class playAudioOnTrigger : MonoBehaviour
 {
     AudioSource theAttachedAudioSource;
+    Vector3 initialSizeText;
+    Vector3 initialSizeImage;
 
     // Start is called before the first frame update
     void Start()
     {
         theAttachedAudioSource = this.GetComponent<AudioSource>();
+
+        foreach (Transform child in transform)
+        {
+            if (child.name == "image")
+            {
+                initialSizeImage = child.localScale;
+            }
+            if (child.name == "text")
+            {
+                initialSizeText = child.localScale;
+            }
+        }
     }
 
     // Update is called once per frame
@@ -32,12 +47,20 @@ public class playAudioOnTrigger : MonoBehaviour
             foreach (Transform child in transform)
             {
                 //child.gameObject.SetActive(true);
-                child.gameObject.GetComponent<Renderer>().material.color = new Color(1,1,1,1);
+                //child.gameObject.GetComponent<Renderer>().material.color = new Color(1,1,1,1);
+                LeanTween.value(gameObject, 0.25f, 1, 0.3f).setOnUpdate((float val) => {
+                    child.gameObject.GetComponent<Renderer>().material.color = new Color(1, 1, 1, val);
+                });
+
                 if (child.gameObject.GetComponent<TextMeshPro>() != null)
                 {
-                    child.gameObject.GetComponent<TextMeshPro>().color = new Color(1, 1, 1, 1);
+                    //child.gameObject.GetComponent<TextMeshPro>().color = new Color(1, 1, 1, 1);
+                    LeanTween.value(gameObject, 0.15f, 1, 0.3f).setOnUpdate((float val) => {
+                        child.gameObject.GetComponent<TextMeshPro>().color = new Color(1, 1, 1, val);
+                    });
                 }
-                child.gameObject.transform.localScale = child.gameObject.transform.localScale * 2;
+                //child.gameObject.transform.localScale = child.gameObject.transform.localScale * 2;
+                LeanTween.scale(child.gameObject, child.gameObject.transform.localScale * 2, 0.3f).setEase(LeanTweenType.linear);
             }
         }
     }
@@ -55,13 +78,29 @@ public class playAudioOnTrigger : MonoBehaviour
             foreach (Transform child in transform)
             {
                 //child.gameObject.SetActive(false);
-                child.gameObject.GetComponent<Renderer>().material.color = new Color(1, 1, 1, 0.25f);
+                //child.gameObject.GetComponent<Renderer>().material.color = new Color(1, 1, 1, 0.25f);
+                LeanTween.value(gameObject, 1f, 0.25f, 0.3f).setOnUpdate((float val) => {
+                    child.gameObject.GetComponent<Renderer>().material.color = new Color(1, 1, 1, val);
+                });
                 if (child.gameObject.GetComponent<TextMeshPro>() != null)
                 {
-                    child.gameObject.GetComponent<TextMeshPro>().color = new Color(1, 1, 1, 0.15f);
+                    //child.gameObject.GetComponent<TextMeshPro>().color = new Color(1, 1, 1, 0.15f);
+                    LeanTween.value(gameObject, 1, 0.15f, 0.3f).setOnUpdate((float val) => {
+                        child.gameObject.GetComponent<TextMeshPro>().color = new Color(1, 1, 1, val);
+                    });
                 }
 
-                child.gameObject.transform.localScale = child.gameObject.transform.localScale / 2;
+                //child.gameObject.transform.localScale = child.gameObject.transform.localScale / 2;
+                //LeanTween.scale(child.gameObject, child.gameObject.transform.localScale / 2, 0.3f).setEase(LeanTweenType.linear);
+
+                if (child.name == "image")
+                {
+                    LeanTween.scale(child.gameObject, initialSizeImage, 0.3f).setEase(LeanTweenType.linear);
+                }
+                if (child.name == "text")
+                {
+                    LeanTween.scale(child.gameObject, initialSizeText, 0.3f).setEase(LeanTweenType.linear);
+                }
             }
         }
     }
