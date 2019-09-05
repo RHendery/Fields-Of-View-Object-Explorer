@@ -201,7 +201,7 @@ GameObject:
   - component: {fileID: 196347418}
   - component: {fileID: 196347417}
   - component: {fileID: 196347416}
-  - component: {fileID: 196347414}
+  - component: {fileID: 196347420}
   m_Layer: 0
   m_Name: can
   m_TagString: museumObject
@@ -209,29 +209,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &196347414
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 196347413}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ce03583c5413cc4fae2253c772cf814, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  flipAxes: 0
-  presentOnGrid: 0
-  stepLayout: 1
-  arcTheta: 270
-  theLineRenderer: {fileID: 228200470}
-  filename: objectData_actual.json
-  lowestDate: 1820
-  highestDate: 1990
-  metaDataSphere: {fileID: 6162900901076695757, guid: 5049ca1608a2621419fe70608c92a806,
-    type: 3}
-  ring: {fileID: 1228749553934793545, guid: 9ccb6f4d040002a40891f37648a3f1ae, type: 3}
 --- !u!1 &196347415
 GameObject:
   m_ObjectHideFlags: 0
@@ -275,7 +252,7 @@ MonoBehaviour:
   onPickUp:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 196347414}
+      - m_Target: {fileID: 196347420}
         m_MethodName: pickUp
         m_Mode: 1
         m_Arguments:
@@ -291,7 +268,7 @@ MonoBehaviour:
   onDetachFromHand:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 196347414}
+      - m_Target: {fileID: 196347420}
         m_MethodName: drop
         m_Mode: 1
         m_Arguments:
@@ -392,6 +369,29 @@ MonoBehaviour:
   handFollowTransform: 1
   highlightOnHover: 1
   hideHighlight: []
+--- !u!114 &196347420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 196347413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb6d99c45c415474384858526db13056, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flipAxes: 0
+  presentOnGrid: 0
+  stepLayout: 0
+  arcTheta: 180
+  theLineRenderer: {fileID: 228200470}
+  CSVFileName: SingleObjectData
+  lowestDate: 1820
+  highestDate: 1990
+  metaDataSphere: {fileID: 6162900901076695757, guid: 5049ca1608a2621419fe70608c92a806,
+    type: 3}
+  ring: {fileID: 1228749553934793545, guid: 9ccb6f4d040002a40891f37648a3f1ae, type: 3}
 --- !u!1 &228200469
 GameObject:
   m_ObjectHideFlags: 0

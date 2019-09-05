@@ -1,12 +1,10 @@
-﻿// old json version
-
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using TMPro;
 
-public class readMetaData : MonoBehaviour
+public class readMetaDataCSV : MonoBehaviour
 {
     public bool flipAxes = false;
     public bool presentOnGrid = false;
@@ -15,7 +13,10 @@ public class readMetaData : MonoBehaviour
     public LineRenderer theLineRenderer;
     
     // file name of language json data - must be in streaming assets folder
-    public string filename = "languageData.json";
+    //public string filename = "languageData.json";
+    // the CSV file name does not have file extension
+    // currently file should be in resources folder
+    public string CSVFileName = "SingleObjectData";
 
     // list to hold data
     List<Dictionary<string, object>> data; 
@@ -37,11 +38,15 @@ public class readMetaData : MonoBehaviour
 
     private GameObject[] loadedMetaDataObjects;
 
+    void Awake()
+    {
+        data = CSVReader.Read("SingleObjectData");
+    }
 
     // Use this for initialization
     void Start()
     {
-      //loadData();
+      loadData();
       //drawArc();
     }
 
@@ -58,22 +63,14 @@ public class readMetaData : MonoBehaviour
 
     private void loadData()
     {
-        // create file path
-        string dataFilePath = Path.Combine(Application.streamingAssetsPath, filename);
-
-        if (File.Exists(dataFilePath))
-        {
-            // read data in
-            string dataAsJson = File.ReadAllText(dataFilePath);
-            objectMetaData[] loadedData = JsonHelper.FromJson<objectMetaData>(dataAsJson);
 
             // keep record of all obejcts we create so we can get ridf of them easily
             // this may cause issues with garbage collection, but lets see
             // seems to be ok so far? maybe check on the profiler
-            loadedMetaDataObjects = new GameObject[loadedData.Length * 2];
+            loadedMetaDataObjects = new GameObject[data.Count * 2];
 
             // iterate through each item of metadata
-            for (int i = 0; i < loadedData.Length; i++)
+            for (int i = 0; i < data.Count; i++)
             {
                 if (presentOnGrid == false)
                 {
@@ -86,21 +83,21 @@ public class readMetaData : MonoBehaviour
                     // everything mapped to 0 - 1
                     // info wisdom already is 0 - 1
                     // but date needs too be remapped using lowestDate and highestDate public fields.
-                    float remappedDate = helpers.Remap(loadedData[i].date, lowestDate, highestDate, 0, 1);
+                    float remappedDate = helpers.Remap(float.Parse(data[i]["date"].ToString()), lowestDate, highestDate, 0, 1);
 
                     // what should map to what
                     if (flipAxes == false)
                     {
-                        radiusAxisData = loadedData[i].infoWisdom;
+                        radiusAxisData = float.Parse(data[i]["infoWisdom"].ToString());
                         arcPositionData = remappedDate;
                     }
                     else
                     {
                         radiusAxisData = remappedDate;
                         //radiusAxisData = helpers.Remap(radiusAxisData, lowestDate, highestDate, 0, 1);
-                        arcPositionData = loadedData[i].infoWisdom;
-                        //arcPositionData = helpers.Remap(arcPositionData, 0, 1, lowestDate, highestDate);
-                    }
+                        arcPositionData = float.Parse(data[i]["infoWisdom"].ToString());
+                    //arcPositionData = helpers.Remap(arcPositionData, 0, 1, lowestDate, highestDate);
+                }
 
                     // the position should be radius of infoWisdom
                     // position on ARC from date remapped to degrees
@@ -133,30 +130,34 @@ public class readMetaData : MonoBehaviour
                     GameObject visualRing = Instantiate(ring, new Vector3(transform.position.x, yPos, transform.position.z), Quaternion.identity);
                     visualRing.transform.localScale = new Vector3(positionradius, 0.01f, positionradius);
 
-                    thisMetaDataObject.transform.localScale = new Vector3(loadedData[i].importance / 2, loadedData[i].importance / 2, loadedData[i].importance / 2);
+                    thisMetaDataObject.transform.localScale = new Vector3(float.Parse(data[i]["importance"].ToString()) / 2, float.Parse(data[i]["importance"].ToString()) / 2, float.Parse(data[i]["importance"].ToString()) / 2);
 
                     // are we an audio type?
-                    if (loadedData[i].type == 1)
+                    if (float.Parse(data[i]["type"].ToString()) == 1)
                     {
-                        print(loadedData[i].fileName);
+                        print(data[i]["fileName"]);
                         AudioSource sphereAudioSource = thisMetaDataObject.GetComponent<AudioSource>();
-                        sphereAudioSource.clip = Resources.Load<AudioClip>(loadedData[i].fileName);
+                        sphereAudioSource.clip = Resources.Load<AudioClip>(data[i]["fileName"].ToString());
 
                         TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
-                        sphereText.text = loadedData[i].text;
+                        sphereText.text = data[i]["text"].ToString();
                     }
 
-                    if (loadedData[i].type == 2)
+                    if (float.Parse(data[i]["type"].ToString()) == 2)
                     {
                         /*Renderer childRenderer = thisMetaDataObject.GetComponentInChildren<Renderer>();
                         print(loadedData[i].fileName);
                         childRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(loadedData[i].fileName));
                         */
-                        if (Resources.Load<Texture2D>(loadedData[i].fileName) != null)
+                        if (Resources.Load<Texture2D>(data[i]["fileName"].ToString()) != null)
                         {
                             GameObject SphereChild = thisMetaDataObject.transform.GetChild(0).gameObject;
                             Renderer sphereChildRenderer = SphereChild.GetComponent<Renderer>();
-                            sphereChildRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(loadedData[i].fileName));
+                            string assetPath = data[i]["fileName"].ToString();
+                           // string assetPath = Path.Combine(data[i]["objectName"].ToString(), data[i]["fileName"].ToString());
+                           // string assetPath = data[i]["objectName"].ToString() + "/" + data[i]["fileName"].ToString();
+                            print("---> " + assetPath);
+                            sphereChildRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(assetPath));
                         }
                         else
                         {
@@ -165,73 +166,80 @@ public class readMetaData : MonoBehaviour
 
 
                         TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
-                        sphereText.text = loadedData[i].text;
+                        sphereText.text = data[i]["text"].ToString();
                     }
                     else
                     {
                         Destroy(thisMetaDataObject.transform.GetChild(0).gameObject);
                     }
 
-                    if (loadedData[i].type == 3)
+                    if (float.Parse(data[i]["type"].ToString()) == 3)
                     {
                         TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
-                        sphereText.text = loadedData[i].text;
+                        sphereText.text = data[i]["text"].ToString();
                     }
 
                     // save this object in the array
                     loadedMetaDataObjects[i] = thisMetaDataObject;
-                    loadedMetaDataObjects[i + loadedData.Length] = visualRing;
+                    loadedMetaDataObjects[i + data.Count] = visualRing;
                 }
 
                 else if (presentOnGrid)
                 {
-                    float remappedDate = helpers.Remap(loadedData[i].date, lowestDate, highestDate, -2f, 2f);
-                    float infoWisdomScale = helpers.Remap(loadedData[i].infoWisdom, 0, 1, 0, 4);
+                    float remappedDate = helpers.Remap(float.Parse(data[i]["date"].ToString()), lowestDate, highestDate, -2f, 2f);
+                    float infoWisdomScale = helpers.Remap(float.Parse(data[i]["infoWisdom"].ToString()), 0, 1, 0, 4);
 
                     GameObject thisMetaDataObject = Instantiate(metaDataSphere, new Vector3(remappedDate, infoWisdomScale, 1), Quaternion.identity);
 
-                    thisMetaDataObject.transform.localScale = new Vector3(loadedData[i].importance / 2, loadedData[i].importance / 2, loadedData[i].importance / 2);
+                    thisMetaDataObject.transform.localScale = new Vector3(float.Parse(data[i]["importance"].ToString()) / 2, float.Parse(data[i]["importance"].ToString()) / 2, float.Parse(data[i]["importance"].ToString()) / 2);
 
-                    // are we an audio type?
-                    if (loadedData[i].type == 1)
+                // are we an audio type?
+                if (float.Parse(data[i]["type"].ToString()) == 1)
+                {
+                    print(data[i]["fileName"]);
+                    AudioSource sphereAudioSource = thisMetaDataObject.GetComponent<AudioSource>();
+                    sphereAudioSource.clip = Resources.Load<AudioClip>(data[i]["fileName"].ToString());
+
+                    TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
+                    sphereText.text = data[i]["text"].ToString();
+                }
+
+                if (float.Parse(data[i]["type"].ToString()) == 2)
+                {
+                    /*Renderer childRenderer = thisMetaDataObject.GetComponentInChildren<Renderer>();
+                    print(loadedData[i].fileName);
+                    childRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(loadedData[i].fileName));
+                    */
+                    if (Resources.Load<Texture2D>(data[i]["fileName"].ToString()) != null)
                     {
-                        print(loadedData[i].fileName);
-                        AudioSource sphereAudioSource = thisMetaDataObject.GetComponent<AudioSource>();
-                        sphereAudioSource.clip = Resources.Load<AudioClip>(loadedData[i].fileName);
-
-                        TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
-                        sphereText.text = loadedData[i].text;
-                    }
-
-                    if (loadedData[i].type == 2)
-                    {
-                        /*Renderer childRenderer = thisMetaDataObject.GetComponentInChildren<Renderer>();
-                        print(loadedData[i].fileName);
-                        childRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(loadedData[i].fileName));
-                        */
-
                         GameObject SphereChild = thisMetaDataObject.transform.GetChild(0).gameObject;
                         Renderer sphereChildRenderer = SphereChild.GetComponent<Renderer>();
-                        sphereChildRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(loadedData[i].fileName));
-
-                        TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
-                        sphereText.text = loadedData[i].text;
+                        sphereChildRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(data[i]["fileName"].ToString()));
                     }
                     else
                     {
-                        Destroy(thisMetaDataObject.transform.GetChild(0).gameObject);
+                        thisMetaDataObject.transform.GetChild(0).gameObject.SetActive(false);
                     }
 
-                    if (loadedData[i].type == 3)
-                    {
-                        TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
-                        sphereText.text = loadedData[i].text;
-                    }
 
-                    loadedMetaDataObjects[i] = thisMetaDataObject;
+                    TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
+                    sphereText.text = data[i]["text"].ToString();
+                }
+                else
+                {
+                    Destroy(thisMetaDataObject.transform.GetChild(0).gameObject);
+                }
+
+                if (float.Parse(data[i]["type"].ToString()) == 3)
+                {
+                    TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
+                    sphereText.text = data[i]["text"].ToString();
+                }
+
+                loadedMetaDataObjects[i] = thisMetaDataObject;
                 }
             }
-        }
+        
     }
 
     private void unloadData()
