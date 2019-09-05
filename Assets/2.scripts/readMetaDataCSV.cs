@@ -37,7 +37,7 @@ public class readMetaDataCSV : MonoBehaviour
 
     void Awake()
     {
-        data = CSVReader.Read("SingleObjectData");
+        data = CSVReader.Read("CSV/SingleObjectData");
     }
 
     // Use this for initialization
