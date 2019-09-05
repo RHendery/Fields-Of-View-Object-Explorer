@@ -6,6 +6,7 @@ TagManager:
   tags:
   - attach
   - museumObject
+  - lineObject
   layers:
   - Default
   - TransparentFX
