@@ -61,6 +61,14 @@ public class playAudioOnTrigger : MonoBehaviour
                 }
                 //child.gameObject.transform.localScale = child.gameObject.transform.localScale * 2;
                 LeanTween.scale(child.gameObject, child.gameObject.transform.localScale * 2, 0.3f).setEase(LeanTweenType.linear);
+
+                if (child.gameObject.GetComponent<LineRenderer>() != null)
+                {
+                    //child.gameObject.GetComponent<TextMeshPro>().color = new Color(1, 1, 1, 1);
+                    LeanTween.value(gameObject, 0.15f, 1, 0.3f).setOnUpdate((float val) => {
+                        child.gameObject.GetComponent<LineRenderer>().SetColors(new Color(0, 0, 0, val), new Color(1, 0, 0, val));
+                    });
+                }
             }
         }
     }
@@ -87,6 +95,14 @@ public class playAudioOnTrigger : MonoBehaviour
                     //child.gameObject.GetComponent<TextMeshPro>().color = new Color(1, 1, 1, 0.15f);
                     LeanTween.value(gameObject, 1, 0.15f, 0.3f).setOnUpdate((float val) => {
                         child.gameObject.GetComponent<TextMeshPro>().color = new Color(1, 1, 1, val);
+                    });
+                }
+
+                if (child.gameObject.GetComponent<LineRenderer>() != null)
+                {
+                    //child.gameObject.GetComponent<TextMeshPro>().color = new Color(1, 1, 1, 1);
+                    LeanTween.value(gameObject, 1, 0.15f, 0.3f).setOnUpdate((float val) => {
+                        child.gameObject.GetComponent<LineRenderer>().SetColors(new Color(0, 0, 0, val), new Color(1, 0, 0, val));
                     });
                 }
 

@@ -88,7 +88,7 @@ BoxCollider:
   m_GameObject: {fileID: 1517387450537489077}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -486,7 +486,7 @@ MonoBehaviour:
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 9.522275, y: 0, z: 9.4925165, w: 0}
+  m_margin: {x: 9.522275, y: 2.3682575, z: 9.4925165, w: 2.4181147}
   m_textInfo:
     textComponent: {fileID: 2338517118714197687}
     characterCount: 11

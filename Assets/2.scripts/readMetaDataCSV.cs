@@ -6,16 +6,18 @@ using TMPro;
 
 public class readMetaDataCSV : MonoBehaviour
 {
+    public bool debug = false;
     public bool flipAxes = false;
     public bool presentOnGrid = false;
     public bool stepLayout = false;
     public float arcTheta = 180;
+    public float upperRadius = 2;
+    public Material lineMaterial;
+
     public LineRenderer theLineRenderer;
     
-    // file name of language json data - must be in streaming assets folder
-    //public string filename = "languageData.json";
     // the CSV file name does not have file extension
-    // currently file should be in resources folder
+    // currently file should be in Resources folder
     public string CSVFileName = "SingleObjectData";
 
     // list to hold data
@@ -27,14 +29,9 @@ public class readMetaDataCSV : MonoBehaviour
     public float highestDate;
 
     // game objects for building environment
-    [Header("GO represents single piece of metadata")]
+    [Header("GO to reprasent a single piece of metadata")]
     public GameObject metaDataSphere;
-
     public GameObject ring;
-
-    // array to read json language data into
-    private objectMetaData[] metaData;
-
 
     private GameObject[] loadedMetaDataObjects;
 
@@ -46,7 +43,10 @@ public class readMetaDataCSV : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-      loadData();
+        if (debug)
+        {
+            loadData();
+        }
       //drawArc();
     }
 
@@ -64,163 +64,102 @@ public class readMetaDataCSV : MonoBehaviour
     private void loadData()
     {
 
-            // keep record of all obejcts we create so we can get ridf of them easily
-            // this may cause issues with garbage collection, but lets see
-            // seems to be ok so far? maybe check on the profiler
-            loadedMetaDataObjects = new GameObject[data.Count * 2];
+        // keep record of all obejcts we create so we can get ridf of them easily
+        // this may cause issues with garbage collection, but lets see
+        // seems to be ok so far? maybe check on the profiler
+        loadedMetaDataObjects = new GameObject[data.Count * 2];
 
-            // iterate through each item of metadata
-            for (int i = 0; i < data.Count; i++)
+        // iterate through each item of metadata 
+        // in the list created from the CSV
+        for (int i = 0; i < data.Count; i++)
+        {
+            if (presentOnGrid == false)
             {
-                if (presentOnGrid == false)
+                // set axis data
+                // radiusAxisData is the data that sets radius of the arc.
+                float radiusAxisData;
+                // arcPositionData is the data that sets a relative position on the arc.
+                float arcPositionData;
+
+                // everything should be re-mapped to 0 - 1
+                // info wisdom already is 0 - 1
+                // but date needs too be remapped using lowestDate and highestDate public fields.
+                float remappedDate = helpers.Remap(float.Parse(data[i]["date"].ToString()), lowestDate, highestDate, 0, 1);
+
+                // what should map to what
+                if (flipAxes == false)
                 {
-                    // set axis data
-                    // radiusAxisData is the data that sets radius of the arc.
-                    float radiusAxisData;
-                    // arcPositionData is the data that sets a relative position on the arc.
-                    float arcPositionData;
-
-                    // everything mapped to 0 - 1
-                    // info wisdom already is 0 - 1
-                    // but date needs too be remapped using lowestDate and highestDate public fields.
-                    float remappedDate = helpers.Remap(float.Parse(data[i]["date"].ToString()), lowestDate, highestDate, 0, 1);
-
-                    // what should map to what
-                    if (flipAxes == false)
-                    {
-                        radiusAxisData = float.Parse(data[i]["infoWisdom"].ToString());
-                        arcPositionData = remappedDate;
-                    }
-                    else
-                    {
-                        radiusAxisData = remappedDate;
-                        //radiusAxisData = helpers.Remap(radiusAxisData, lowestDate, highestDate, 0, 1);
-                        arcPositionData = float.Parse(data[i]["infoWisdom"].ToString());
-                    //arcPositionData = helpers.Remap(arcPositionData, 0, 1, lowestDate, highestDate);
+                    radiusAxisData = float.Parse(data[i]["infoWisdom"].ToString());
+                    arcPositionData = remappedDate;
+                }
+                else
+                {
+                    radiusAxisData = remappedDate;
+                    arcPositionData = float.Parse(data[i]["infoWisdom"].ToString());
                 }
 
-                    // the position should be radius of infoWisdom
-                    // position on ARC from date remapped to degrees
+                // what is the radius of our arc?
+                // map info wisdom range from 0-1 to 0 to upperRadius (set in inspector)
+                float positionradius = helpers.Remap(radiusAxisData, 0, 1, 0, upperRadius);
 
-                    // what is the radius?
-                    //float positionradius = loadedData[i].infoWisdom * 2;
-                    // map info wisdom range from 0-1 to 0-2
-                    float positionradius = helpers.Remap(radiusAxisData, 0, 1, 0, 2);
+                // what is our remapped data as a degree 
+                // half of arcTheta on either side giving an arc of arcTheta range
+                // adding the camera Y rotation to offset the whole arc by the rotation of the camera
+                float degree = helpers.Remap(arcPositionData, 0, 1, -arcTheta / 2, arcTheta / 2) + Mathf.Abs(Camera.main.transform.eulerAngles.y);
 
-                    // what is our remapped date to a degree
-                    float degree = helpers.Remap(arcPositionData, 0, 1, -arcTheta / 2, arcTheta / 2) + Mathf.Abs(Camera.main.transform.eulerAngles.y);
-                    print("camera Angle is: " + Camera.main.transform.eulerAngles.y / 2);
+                // what is the position on a circumference?
+                // need to make relative to the object when touched
+                // we do this by adding the objects position to the x & z
+                //(x, y) = (radius * sin(radians), radius * cos(radians))
+                float xPosOnradius = positionradius * Mathf.Sin(degree * Mathf.Deg2Rad) + transform.position.x;
+                float zPosOnradius = positionradius * Mathf.Cos(degree * Mathf.Deg2Rad) + transform.position.z;
+                float yPos = this.transform.position.y; // + 0.5f;
 
-                    // what is the position on a circumference?
-                    // need to make relative to the object when touched
-                    //(x, y) = (12 * sin(115), 12 * cos(115))
-                    float xPosOnradius = positionradius * Mathf.Sin(degree * Mathf.Deg2Rad) + transform.position.x;
-                    float zPosOnradius = positionradius * Mathf.Cos(degree * Mathf.Deg2Rad) + transform.position.z;
-                    float yPos = this.transform.position.y; // + 0.5f;
-
-                    if (stepLayout)
-                    {
-                        yPos = yPos + positionradius / 2;
-                    }
-
-                    //GameObject thisMetaDataObject = Instantiate(metaDataSphere, new Vector3(transform.position.x, transform.position.y, transform.position.z + loadedData[i].infoWisdom), Quaternion.identity);
-                    GameObject thisMetaDataObject = Instantiate(metaDataSphere, new Vector3(xPosOnradius, yPos, zPosOnradius), Quaternion.identity);
-
-                    //instatiate a ring as a visual clue
-                    GameObject visualRing = Instantiate(ring, new Vector3(transform.position.x, yPos, transform.position.z), Quaternion.identity);
-                    visualRing.transform.localScale = new Vector3(positionradius, 0.01f, positionradius);
-
-                    thisMetaDataObject.transform.localScale = new Vector3(float.Parse(data[i]["importance"].ToString()) / 2, float.Parse(data[i]["importance"].ToString()) / 2, float.Parse(data[i]["importance"].ToString()) / 2);
-
-                    // are we an audio type?
-                    if (float.Parse(data[i]["type"].ToString()) == 1)
-                    {
-                        print(data[i]["fileName"]);
-                        AudioSource sphereAudioSource = thisMetaDataObject.GetComponent<AudioSource>();
-                        sphereAudioSource.clip = Resources.Load<AudioClip>(data[i]["fileName"].ToString());
-
-                        TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
-                        sphereText.text = data[i]["text"].ToString();
-                    }
-
-                    if (float.Parse(data[i]["type"].ToString()) == 2)
-                    {
-                        /*Renderer childRenderer = thisMetaDataObject.GetComponentInChildren<Renderer>();
-                        print(loadedData[i].fileName);
-                        childRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(loadedData[i].fileName));
-                        */
-                        if (Resources.Load<Texture2D>(data[i]["fileName"].ToString()) != null)
-                        {
-                            GameObject SphereChild = thisMetaDataObject.transform.GetChild(0).gameObject;
-                            Renderer sphereChildRenderer = SphereChild.GetComponent<Renderer>();
-                            string assetPath = data[i]["fileName"].ToString();
-                           // string assetPath = Path.Combine(data[i]["objectName"].ToString(), data[i]["fileName"].ToString());
-                           // string assetPath = data[i]["objectName"].ToString() + "/" + data[i]["fileName"].ToString();
-                            print("---> " + assetPath);
-                            sphereChildRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(assetPath));
-                        }
-                        else
-                        {
-                            thisMetaDataObject.transform.GetChild(0).gameObject.SetActive(false);
-                        }
-
-
-                        TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
-                        sphereText.text = data[i]["text"].ToString();
-                    }
-                    else
-                    {
-                        Destroy(thisMetaDataObject.transform.GetChild(0).gameObject);
-                    }
-
-                    if (float.Parse(data[i]["type"].ToString()) == 3)
-                    {
-                        TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
-                        sphereText.text = data[i]["text"].ToString();
-                    }
-
-                    // save this object in the array
-                    loadedMetaDataObjects[i] = thisMetaDataObject;
-                    loadedMetaDataObjects[i + data.Count] = visualRing;
+                if (stepLayout)
+                {
+                    yPos = yPos + positionradius / 2;
                 }
 
-                else if (presentOnGrid)
-                {
-                    float remappedDate = helpers.Remap(float.Parse(data[i]["date"].ToString()), lowestDate, highestDate, -2f, 2f);
-                    float infoWisdomScale = helpers.Remap(float.Parse(data[i]["infoWisdom"].ToString()), 0, 1, 0, 4);
+                // instatiate the metadata object
+                GameObject thisMetaDataObject = Instantiate(metaDataSphere, new Vector3(xPosOnradius, yPos, zPosOnradius), Quaternion.identity);
 
-                    GameObject thisMetaDataObject = Instantiate(metaDataSphere, new Vector3(remappedDate, infoWisdomScale, 1), Quaternion.identity);
+                // rename object so we can find it easily
+                thisMetaDataObject.transform.name = data[i]["objectName"].ToString() + data[i]["itemNumber"].ToString();
 
-                    thisMetaDataObject.transform.localScale = new Vector3(float.Parse(data[i]["importance"].ToString()) / 2, float.Parse(data[i]["importance"].ToString()) / 2, float.Parse(data[i]["importance"].ToString()) / 2);
+                // instatiate a ring as a visual clue
+                GameObject visualRing = Instantiate(ring, new Vector3(transform.position.x, yPos, transform.position.z), Quaternion.identity);
+                visualRing.transform.localScale = new Vector3(positionradius, 0.01f, positionradius);
 
+                // set scale of object using importance value
+                thisMetaDataObject.transform.localScale = new Vector3(float.Parse(data[i]["importance"].ToString()) / 2, float.Parse(data[i]["importance"].ToString()) / 2, float.Parse(data[i]["importance"].ToString()) / 2);
+
+                // create the path to the assets we will need
+                string assetPath = data[i]["objectName"].ToString() + "/" + data[i]["fileName"].ToString();
+                    
                 // are we an audio type?
                 if (float.Parse(data[i]["type"].ToString()) == 1)
                 {
-                    print(data[i]["fileName"]);
+                    //print(data[i]["fileName"]);
                     AudioSource sphereAudioSource = thisMetaDataObject.GetComponent<AudioSource>();
-                    sphereAudioSource.clip = Resources.Load<AudioClip>(data[i]["fileName"].ToString());
+                    sphereAudioSource.clip = Resources.Load<AudioClip>(assetPath);
 
                     TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
                     sphereText.text = data[i]["text"].ToString();
                 }
 
+                // are we a image type?
                 if (float.Parse(data[i]["type"].ToString()) == 2)
-                {
-                    /*Renderer childRenderer = thisMetaDataObject.GetComponentInChildren<Renderer>();
-                    print(loadedData[i].fileName);
-                    childRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(loadedData[i].fileName));
-                    */
-                    if (Resources.Load<Texture2D>(data[i]["fileName"].ToString()) != null)
+                {  
+                    if (Resources.Load<Texture2D>(assetPath) != null)
                     {
                         GameObject SphereChild = thisMetaDataObject.transform.GetChild(0).gameObject;
                         Renderer sphereChildRenderer = SphereChild.GetComponent<Renderer>();
-                        sphereChildRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(data[i]["fileName"].ToString()));
+                        sphereChildRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(assetPath));
                     }
                     else
                     {
                         thisMetaDataObject.transform.GetChild(0).gameObject.SetActive(false);
                     }
-
 
                     TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
                     sphereText.text = data[i]["text"].ToString();
@@ -230,6 +169,68 @@ public class readMetaDataCSV : MonoBehaviour
                     Destroy(thisMetaDataObject.transform.GetChild(0).gameObject);
                 }
 
+                // or are we an abitrary text type?
+                if (float.Parse(data[i]["type"].ToString()) == 3)
+                {
+                    TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
+                    sphereText.text = data[i]["text"].ToString();
+                }
+
+                // save this object in the array
+                loadedMetaDataObjects[i] = thisMetaDataObject;
+                loadedMetaDataObjects[i + data.Count] = visualRing;
+            }
+
+            /// ---------
+            /// present on grid code
+            /// ---------
+            
+            else if (presentOnGrid)
+            {
+                float remappedDate = helpers.Remap(float.Parse(data[i]["date"].ToString()), lowestDate, highestDate, -2f, 2f);
+                float infoWisdomScale = helpers.Remap(float.Parse(data[i]["infoWisdom"].ToString()), 0, 1, 0, 4);
+
+                GameObject thisMetaDataObject = Instantiate(metaDataSphere, new Vector3(remappedDate, infoWisdomScale, 1), Quaternion.identity);
+
+                thisMetaDataObject.transform.localScale = new Vector3(float.Parse(data[i]["importance"].ToString()) / 2, float.Parse(data[i]["importance"].ToString()) / 2, float.Parse(data[i]["importance"].ToString()) / 2);
+
+                // create the path to the assets we will need
+                string assetPath = data[i]["objectName"].ToString() + "/" + data[i]["fileName"].ToString();
+
+                // are we an audio type?
+                if (float.Parse(data[i]["type"].ToString()) == 1)
+                {
+                    //print(data[i]["fileName"]);
+                    AudioSource sphereAudioSource = thisMetaDataObject.GetComponent<AudioSource>();
+                    sphereAudioSource.clip = Resources.Load<AudioClip>(assetPath);
+
+                    TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
+                    sphereText.text = data[i]["text"].ToString();
+                }
+
+                // are we a image type?
+                if (float.Parse(data[i]["type"].ToString()) == 2)
+                {
+                    if (Resources.Load<Texture2D>(assetPath) != null)
+                    {
+                        GameObject SphereChild = thisMetaDataObject.transform.GetChild(0).gameObject;
+                        Renderer sphereChildRenderer = SphereChild.GetComponent<Renderer>();
+                        sphereChildRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(assetPath));
+                    }
+                    else
+                    {
+                        thisMetaDataObject.transform.GetChild(0).gameObject.SetActive(false);
+                    }
+
+                    TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
+                    sphereText.text = data[i]["text"].ToString();
+                }
+                else
+                {
+                    Destroy(thisMetaDataObject.transform.GetChild(0).gameObject);
+                }
+
+                // or are we an abitrary text type?
                 if (float.Parse(data[i]["type"].ToString()) == 3)
                 {
                     TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
@@ -237,9 +238,10 @@ public class readMetaDataCSV : MonoBehaviour
                 }
 
                 loadedMetaDataObjects[i] = thisMetaDataObject;
-                }
             }
-        
+        }
+
+        makeConnections();
     }
 
     private void unloadData()
@@ -249,13 +251,17 @@ public class readMetaDataCSV : MonoBehaviour
             Destroy(obj);
         }
 
+        foreach (GameObject tagged in GameObject.FindGameObjectsWithTag("lineObject"))
+        {
+            Destroy(tagged);
+        }
+
         loadedMetaDataObjects = new GameObject[0];
     }
 
     void drawArc()
     {
         List<Vector3> arcPoints = new List<Vector3>();
-        //arcTheta = arcTheta + Mathf.Abs(Camera.main.transform.eulerAngles.y);
         float startAngle = -(arcTheta / 2) + Mathf.Abs(Camera.main.transform.eulerAngles.y); 
         float endAngle = (arcTheta / 2) + Mathf.Abs(Camera.main.transform.eulerAngles.y);
         print(startAngle + "  " + endAngle);
@@ -278,6 +284,47 @@ public class readMetaDataCSV : MonoBehaviour
         Vector3[] arrayOfpositions = arcPoints.ToArray();
         theLineRenderer.positionCount = segments;
         theLineRenderer.SetPositions(arrayOfpositions);
+    }
+
+    void makeConnections()
+    {
+        for (int i = 0; i < data.Count; i++)
+        {
+            if (data[i]["parent"].ToString() != "")
+            {
+                string parentName = data[i]["objectName"].ToString() + data[i]["parent"].ToString();
+                print("parent ---> " + parentName);
+                GameObject myParent = GameObject.Find(parentName);
+                string thisName = data[i]["objectName"].ToString() + data[i]["itemNumber"].ToString();
+                print(thisName);
+                GameObject thisObject = GameObject.Find(thisName);
+
+                DrawLine(thisObject.transform.position, myParent.transform.position, Color.red, thisObject, 10);
+            }
+        }
+
+        void DrawLine(Vector3 start, Vector3 end, Color color, GameObject myParent, float duration = 0.2f)
+        {
+            GameObject myLine = new GameObject();
+            myLine.transform.tag = "lineObject";
+            myLine.transform.parent = myParent.transform;
+            myLine.transform.position = start;
+            myLine.AddComponent<LineRenderer>();
+            LineRenderer lr = myLine.GetComponent<LineRenderer>();
+            lr.material = lineMaterial;
+            lr.SetColors(new Color(0,0,0,0.25f), new Color(1, 0, 0, 0.25f));
+            lr.SetWidth(0.02f, 0.02f);
+            lr.positionCount = 3;
+
+            Vector3 halfwayPoint = (start + end) / 2;
+            Vector3 liftedHalfwayPoint = new Vector3(halfwayPoint.x, halfwayPoint.y + 1f, halfwayPoint.z);
+
+            lr.SetPosition(0, start);
+            lr.SetPosition(1, liftedHalfwayPoint);
+            lr.SetPosition(2, end);
+            //GameObject.Destroy(myLine, duration);
+
+        }
     }
 }
 
