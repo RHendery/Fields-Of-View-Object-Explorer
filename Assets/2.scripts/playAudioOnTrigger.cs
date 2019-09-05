@@ -36,6 +36,14 @@ public class playAudioOnTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.tag == "museumObject")
+        {
+            /*LeanTween.value(gameObject, 1, 0.1f, 0.3f).setOnUpdate((float val) => {
+                other.gameObject.GetComponent<Renderer>().material.color = new Color(1, 1, 1, val);
+            });*/
+            //other.gameObject.GetComponent<Renderer>().enabled = false;
+        }
+
         if (other.tag == "museumObject" && theAttachedAudioSource.clip != null)
         {
             theAttachedAudioSource.Play();
@@ -60,7 +68,7 @@ public class playAudioOnTrigger : MonoBehaviour
                     });
                 }
                 //child.gameObject.transform.localScale = child.gameObject.transform.localScale * 2;
-                LeanTween.scale(child.gameObject, child.gameObject.transform.localScale * 2, 0.3f).setEase(LeanTweenType.linear);
+                LeanTween.scale(child.gameObject, child.gameObject.transform.localScale * 1.1f, 0.3f).setEase(LeanTweenType.linear);
 
                 if (child.gameObject.GetComponent<LineRenderer>() != null)
                 {
@@ -75,6 +83,14 @@ public class playAudioOnTrigger : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        if (other.tag == "museumObject")
+        {
+            /*LeanTween.value(gameObject, 0.1f, 1, 0.3f).setOnUpdate((float val) => {
+                other.gameObject.GetComponent<Renderer>().material.color = new Color(1, 1, 1, val);
+            });*/
+            //other.gameObject.GetComponent<Renderer>().enabled = true;
+        }
+
         if (other.tag == "museumObject" && theAttachedAudioSource.clip != null)
         {
             theAttachedAudioSource.Stop();
