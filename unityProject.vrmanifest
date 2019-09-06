@@ -5,7 +5,11 @@
       "app_key": "application.generated.unity.hands.exe",
       "launch_type": "url",
       "url": "steam://launch/",
+<<<<<<< HEAD
       "action_manifest_path": "D:\\git projects\\Fields-Of-View-Object-Explorer\\actions.json",
+=======
+      "action_manifest_path": "D:\\andrew\\project in github\\Fields-Of-View-Object-Explorer\\actions.json",
+>>>>>>> ec6f79cb6c71dfdf08ef0974900b1a32d6fa8252
       "strings": {
         "en_us": {
           "name": "hands [Testing]"

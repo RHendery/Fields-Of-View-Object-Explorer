@@ -37,7 +37,7 @@ public class readMetaDataCSV : MonoBehaviour
 
     void Awake()
     {
-        data = CSVReader.Read("SingleObjectData");
+        data = CSVReader.Read("CSV/SingleObjectData");
     }
 
     // Use this for initialization
@@ -155,6 +155,24 @@ public class readMetaDataCSV : MonoBehaviour
                         GameObject SphereChild = thisMetaDataObject.transform.GetChild(0).gameObject;
                         Renderer sphereChildRenderer = SphereChild.GetComponent<Renderer>();
                         sphereChildRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(assetPath));
+                        Texture2D thisTexture = Resources.Load<Texture2D>(assetPath);
+
+                        float ratio;
+                        if(thisTexture.width > thisTexture.height)
+                        {
+                            ratio = thisTexture.width / thisTexture.height;
+                            SphereChild.gameObject.transform.localScale = new Vector3(-1,ratio, -0.01f);
+                        }
+                        else
+                        {
+                            ratio = thisTexture.height / thisTexture.width;
+                            SphereChild.gameObject.transform.localScale = new Vector3(-ratio, 1, -0.01f);
+                        }
+                        SphereChild.gameObject.transform.localScale = new Vector3(-thisTexture.width / 1000, thisTexture.height / 1000, -0.01f);
+
+
+                        // hide sphere
+                        thisMetaDataObject.GetComponent<Renderer>().enabled = false;
                     }
                     else
                     {
@@ -174,6 +192,9 @@ public class readMetaDataCSV : MonoBehaviour
                 {
                     TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
                     sphereText.text = data[i]["text"].ToString();
+
+                    // hide sphere
+                    thisMetaDataObject.GetComponent<Renderer>().enabled = false;
                 }
 
                 // save this object in the array
@@ -216,6 +237,8 @@ public class readMetaDataCSV : MonoBehaviour
                         GameObject SphereChild = thisMetaDataObject.transform.GetChild(0).gameObject;
                         Renderer sphereChildRenderer = SphereChild.GetComponent<Renderer>();
                         sphereChildRenderer.material.SetTexture("_MainTex", Resources.Load<Texture2D>(assetPath));
+                        // hide sphere
+                        thisMetaDataObject.GetComponent<Renderer>().enabled = false;
                     }
                     else
                     {
@@ -235,6 +258,9 @@ public class readMetaDataCSV : MonoBehaviour
                 {
                     TextMeshPro sphereText = thisMetaDataObject.transform.GetChild(1).gameObject.GetComponent<TextMeshPro>();
                     sphereText.text = data[i]["text"].ToString();
+
+                    // hide sphere
+                    thisMetaDataObject.GetComponent<Renderer>().enabled = false;
                 }
 
                 loadedMetaDataObjects[i] = thisMetaDataObject;
@@ -323,7 +349,6 @@ public class readMetaDataCSV : MonoBehaviour
             lr.SetPosition(1, liftedHalfwayPoint);
             lr.SetPosition(2, end);
             //GameObject.Destroy(myLine, duration);
-
         }
     }
 }
